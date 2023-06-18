@@ -1,0 +1,29 @@
+version "2018.0"
+
+attr buildingHeight = 10
+attr buildingWidth = 20
+attr buildingDepth = 20
+
+Lot -->
+  extrude(buildingHeight)
+  
+Building -->
+  alignScopeToAxes(y)
+  setupProjection(0, buildingHeight, 0)
+  comp(f){side: Side | top : Top}
+
+Side -->
+  case scope.sx > scope.sz: // Ширина больше глубины
+    setupProjection(0, buildingWidth, 0)
+    extrude(buildingDepth)
+  else: // Глубина больше ширины
+    setupProjection(0, buildingDepth, 0)
+    extrude(buildingWidth)
+
+Top -->
+  setupProjection(0, buildingWidth, 0)
+  extrude(buildingDepth)
+
+CityModel -->
+  GetMapData("city_data.json") // Загрузка данных города из файла JSON
+  extrudeCGA() // Применение правил CGA для создания городской среды
